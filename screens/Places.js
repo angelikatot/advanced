@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, FlatList, Alert } from 'react-native';
+import { View, Alert, FlatList, StyleSheet } from 'react-native';
 import { ref, push, onValue, remove } from 'firebase/database';
 import { database } from '../firebaseConfig';
-import { Input, ListItem } from 'react-native-elements';
+import { Input, ListItem, Button } from 'react-native-elements';
 
 const Places = ({ navigation }) => {
     const [address, setAddress] = useState('');
@@ -45,34 +45,77 @@ const Places = ({ navigation }) => {
     };
 
     return (
-        <View>
+        <View style={styles.container}>
             <Input
                 placeholder="Enter address"
                 value={address}
                 onChangeText={setAddress}
+                containerStyle={styles.inputContainer}
             />
-            <Button title="SAVE" onPress={handleSave} />
+            <Button
+                title="SAVE"
+                onPress={handleSave}
+                buttonStyle={styles.saveButton}
+            />
             <FlatList
                 data={items}
                 keyExtractor={(item) => item.key}
                 renderItem={({ item }) => (
                     <ListItem bottomDivider>
                         <ListItem.Content>
-                            <ListItem.Title>{item.address}</ListItem.Title>
+                            <ListItem.Title style={styles.listTitle}>{item.address}</ListItem.Title>
                         </ListItem.Content>
-                        <Button
-                            title="Show on Map"
-                            onPress={() => handleNavigateToMap(item.address)}
-                        />
-                        <Button
-                            title="Delete"
-                            onPress={() => handleRemove(item.key)}
-                        />
+                        <View style={styles.buttonContainer}>
+                            <Button
+                                title="Show on Map"
+                                onPress={() => handleNavigateToMap(item.address)}
+                                buttonStyle={styles.showButton}
+                                containerStyle={styles.buttonSpacing}
+                            />
+                            <Button
+                                title="Delete"
+                                onPress={() => handleRemove(item.key)}
+                                buttonStyle={styles.deleteButton}
+                                containerStyle={styles.buttonSpacing}
+                            />
+                        </View>
                     </ListItem>
                 )}
             />
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 16,
+        backgroundColor: '#f0f8ff', // taustaväri
+    },
+    inputContainer: {
+        marginBottom: 16,
+    },
+    saveButton: {
+        backgroundColor: '#FF69B4',
+        marginBottom: 16,
+    },
+    listTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    buttonSpacing: {
+        marginHorizontal: 5,
+    },
+    showButton: {
+        backgroundColor: '#4682b4',
+    },
+    deleteButton: {
+        backgroundColor: '#ff6347',
+    },
+});
 
 export default Places;
